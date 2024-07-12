@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Collection;
 import java.util.List;
@@ -52,4 +53,7 @@ public class Usuario implements UserDetails {
         }
 
 
+    public boolean validaSenha(String password, BCryptPasswordEncoder passwordEncoder) {
+        return false;
+    }
 }
