@@ -35,12 +35,10 @@ public class TokenController {
 
         Instant agora = Instant.now();
 
-        String scope = "ADMIN";
-
-//        String scope = usuario.getAuthorities()
-//                .stream()
-//                .map(authority -> authority.getAuthority())
-//                .collect(Collectors.joining(" "));
+        String scope = usuario.getAuthorities()
+                .stream()
+                .map(authority -> authority.getAuthority())
+                .collect(Collectors.joining(" "));
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
