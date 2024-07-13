@@ -1,8 +1,9 @@
 package br.com.fmt.M02S09.services;
 
 import br.com.fmt.M02S09.controllers.dto.LoginRequestDTO;
-import br.com.fmt.M02S09.entities.Perfil;
+import br.com.fmt.M02S09.entities.Role;
 import br.com.fmt.M02S09.entities.Usuario;
+import br.com.fmt.M02S09.repositories.NutricionistaRepository;
 import br.com.fmt.M02S09.repositories.UsuarioRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,12 +15,14 @@ public class UsuarioService {
 
     private final BCryptPasswordEncoder passwordEncoder;
     private final UsuarioRepository usuarioRepository;
-    private final PerfilService perfilService;
+    private final RoleService roleService;
+    private final NutricionistaRepository nutricionistaRepository;
 
-    public UsuarioService(BCryptPasswordEncoder passwordEncoder, UsuarioRepository usuarioRepository, PerfilService perfilService) {
+    public UsuarioService(BCryptPasswordEncoder passwordEncoder, UsuarioRepository usuarioRepository, RoleService roleService, NutricionistaRepository nutricionistaRepository) {
         this.passwordEncoder = passwordEncoder;
         this.usuarioRepository = usuarioRepository;
-        this.perfilService = perfilService;
+        this.roleService = roleService;
+        this.nutricionistaRepository = nutricionistaRepository;
     }
 
     public Usuario validaUsuario(LoginRequestDTO request) {
@@ -41,12 +44,13 @@ public class UsuarioService {
             throw new RuntimeException("Já existe cadastro com o nome de pessoa usuária " + cadastroRequest.username());
         }
 
-        Perfil perfil = perfilService.validaPerfil(cadastroRequest.nomePerfil());
+        Role role = roleService.validaPerfil(cadastroRequest.nomePerfil());
 
         Usuario usuario = new Usuario();
         usuario.setUsername(cadastroRequest.username());
         usuario.setPassword(passwordEncoder.encode(cadastroRequest.password()));
-        usuario.setPerfilList(Set.of(perfil));
+        usuario.setRoleList(Set.of(role));
+        usuario.setNutricionista(nutricionistaRepository.findById(cadastroRequest.idNutricionista()).orElse(null));
 
         usuarioRepository.save(usuario);
     }

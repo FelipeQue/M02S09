@@ -14,7 +14,7 @@ public class Usuario implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "usuario_id")
+    @Column(name = "id_usuario")
     private Long id;
     @Column(unique = true)
     private String username;
@@ -22,11 +22,15 @@ public class Usuario implements UserDetails {
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
-            name = "usuario_papel",
-            joinColumns = @JoinColumn(name = "usuario_id"),
-            inverseJoinColumns = @JoinColumn(name = "perfil_id")
+            name = "usuario_role",
+            joinColumns = @JoinColumn(name = "id_usuario"),
+            inverseJoinColumns = @JoinColumn(name = "id_role")
     )
-    private Set<Perfil> perfilList;
+    private Set<Role> roleList;
+
+    @ManyToOne
+    @JoinColumn(name = "nutricionista_id")
+    private Nutricionista nutricionista;
 
     public Long getId() {
         return id;
@@ -46,7 +50,7 @@ public class Usuario implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return perfilList;
+        return roleList;
     }
 
     @Override
@@ -59,12 +63,20 @@ public class Usuario implements UserDetails {
         return username;
         }
 
-    public Set<Perfil> getPerfilList() {
-        return perfilList;
+    public Set<Role> getRoleList() {
+        return roleList;
     }
 
-    public void setPerfilList(Set<Perfil> perfilList) {
-        this.perfilList = perfilList;
+    public void setRoleList(Set<Role> roleList) {
+        this.roleList = roleList;
+    }
+
+    public Nutricionista getNutricionista() {
+        return nutricionista;
+    }
+
+    public void setNutricionista(Nutricionista nutricionista) {
+        this.nutricionista = nutricionista;
     }
 
     public boolean validaSenha(String password, BCryptPasswordEncoder passwordEncoder) {

@@ -3,7 +3,9 @@ package br.com.fmt.M02S09.controllers;
 import br.com.fmt.M02S09.controllers.dto.NutricionistaRequestDTO;
 import br.com.fmt.M02S09.controllers.dto.NutricionistaResponseDTO;
 import br.com.fmt.M02S09.services.NutricionistaService;
+import br.com.fmt.M02S09.services.TokenService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,18 +15,24 @@ import java.util.List;
 public class NutricionistaController {
 
     private final NutricionistaService nutricionistaService;
+    private final TokenService tokenService;
 
-    public NutricionistaController(NutricionistaService nutricionistaService) {
+    public NutricionistaController(NutricionistaService nutricionistaService, TokenService tokenService) {
         this.nutricionistaService = nutricionistaService;
+        this.tokenService = tokenService;
     }
 
+    @PreAuthorize("hasAnyAuthority('SCOPE_ADMIN','SCOPE_NUTRI')")
     @PostMapping()
     public NutricionistaResponseDTO salvarNutricionista(@RequestBody NutricionistaRequestDTO request) {
         return nutricionistaService.salvarNutricionista(request);
     }
 
     @GetMapping()
-    public List<NutricionistaResponseDTO> listarnutricionistas() {
+    public List<NutricionistaResponseDTO> listarnutricionistas(
+            @RequestHeader(name="Authorization") String token
+    ) {
+        tokenService.validaToken(token, "NUTRI");
         var nutricionistas = nutricionistaService.listarNutricionistas();
         if (nutricionistas.isEmpty()){
             return null;
