@@ -1,13 +1,12 @@
 package br.com.fmt.M02S09.entities;
 
 import jakarta.persistence.*;
-import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "usuario")
@@ -15,10 +14,19 @@ public class Usuario implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "usuario_id")
     private Long id;
     @Column(unique = true)
     private String username;
     private String password;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "usuario_papel",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "perfil_id")
+    )
+    private Set<Perfil> perfilList;
 
     public Long getId() {
         return id;
@@ -38,8 +46,7 @@ public class Usuario implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        //return List.of();
-        return null;
+        return perfilList;
     }
 
     @Override
@@ -52,6 +59,13 @@ public class Usuario implements UserDetails {
         return username;
         }
 
+    public Set<Perfil> getPerfilList() {
+        return perfilList;
+    }
+
+    public void setPerfilList(Set<Perfil> perfilList) {
+        this.perfilList = perfilList;
+    }
 
     public boolean validaSenha(String password, BCryptPasswordEncoder passwordEncoder) {
         return false;
