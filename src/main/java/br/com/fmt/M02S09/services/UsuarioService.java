@@ -17,12 +17,14 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final RoleService roleService;
     private final NutricionistaRepository nutricionistaRepository;
+    private final UsuarioDetailService usuarioDetailService;
 
-    public UsuarioService(BCryptPasswordEncoder passwordEncoder, UsuarioRepository usuarioRepository, RoleService roleService, NutricionistaRepository nutricionistaRepository) {
+    public UsuarioService(BCryptPasswordEncoder passwordEncoder, UsuarioRepository usuarioRepository, RoleService roleService, NutricionistaRepository nutricionistaRepository, UsuarioDetailService usuarioDetailService) {
         this.passwordEncoder = passwordEncoder;
         this.usuarioRepository = usuarioRepository;
         this.roleService = roleService;
         this.nutricionistaRepository = nutricionistaRepository;
+        this.usuarioDetailService = usuarioDetailService;
     }
 
     public Usuario validaUsuario(LoginRequestDTO request) {
