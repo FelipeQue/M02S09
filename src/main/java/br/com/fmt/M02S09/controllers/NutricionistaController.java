@@ -22,17 +22,18 @@ public class NutricionistaController {
         this.tokenService = tokenService;
     }
 
-    @PreAuthorize("hasAnyAuthority('SCOPE_ADMIN','SCOPE_NUTRI')")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PostMapping()
     public NutricionistaResponseDTO salvarNutricionista(@RequestBody NutricionistaRequestDTO request) {
         return nutricionistaService.salvarNutricionista(request);
     }
 
+    @PreAuthorize("hasAnyAuthority('NUTRICIONISTA') or hasAnyAuthority('ADMIN') or hasAnyAuthority('PACIENTE')")
     @GetMapping()
     public List<NutricionistaResponseDTO> listarnutricionistas(
             @RequestHeader(name="Authorization") String token
     ) {
-        tokenService.validaToken(token, "NUTRI");
+        //tokenService.validaToken(token, "NUTRICIONISTA");
         var nutricionistas = nutricionistaService.listarNutricionistas();
         if (nutricionistas.isEmpty()){
             return null;
@@ -42,6 +43,7 @@ public class NutricionistaController {
 
     }
 
+    @PreAuthorize("hasAnyAuthority('NUTRICIONISTA') or hasAnyAuthority('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<NutricionistaResponseDTO> search(@PathVariable long id) {
         NutricionistaResponseDTO response = nutricionistaService.buscarNutricionista(id);
@@ -52,12 +54,14 @@ public class NutricionistaController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> remove(@PathVariable long id) {
         nutricionistaService.removerNutricionista(id);
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasAnyAuthority('NUTRICIONISTA') or hasAnyAuthority('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<NutricionistaResponseDTO> update(@PathVariable long id, @RequestBody NutricionistaRequestDTO request) {
         NutricionistaResponseDTO nutricionista = nutricionistaService.atualizarNutricionista(id, request);
