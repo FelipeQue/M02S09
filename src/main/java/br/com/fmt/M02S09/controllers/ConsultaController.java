@@ -20,13 +20,13 @@ public class ConsultaController {
         this.consultaService = consultaService;
     }
 
-    @PreAuthorize("hasAnyAuthority('NUTRICIONISTA') or hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_NUTRICIONISTA', 'SCOPE_ADMIN')")
     @PostMapping()
     public ConsultaResponseDTO salvarConsulta(@RequestBody ConsultaRequestDTO request) {
         return consultaService.salvarConsulta(request);
     }
 
-    @PreAuthorize("hasAnyAuthority('NUTRICIONISTA') or hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_NUTRICIONISTA', 'SCOPE_ADMIN')")
     @GetMapping()
     public List<ConsultaResponseListDTO> listarConsultas() {
         var consultas = consultaService.listarConsultas();
@@ -38,7 +38,7 @@ public class ConsultaController {
 
     }
 
-    @PreAuthorize("hasAnyAuthority('NUTRICIONISTA') or hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_NUTRICIONISTA', 'SCOPE_ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<ConsultaResponseDTO> search(@PathVariable long id) {
         ConsultaResponseDTO response = consultaService.buscarConsulta(id);
@@ -49,14 +49,14 @@ public class ConsultaController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('NUTRICIONISTA') or hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_NUTRICIONISTA', 'SCOPE_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> remove(@PathVariable long id) {
         consultaService.removerConsulta(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasAnyAuthority('NUTRICIONISTA') or hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_NUTRICIONISTA', 'SCOPE_ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<ConsultaResponseDTO> update(@PathVariable long id, @RequestBody ConsultaRequestDTO request) {
         ConsultaResponseDTO consulta = consultaService.atualizarConsulta(id, request);

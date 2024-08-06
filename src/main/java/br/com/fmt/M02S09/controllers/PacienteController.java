@@ -21,7 +21,7 @@ public class PacienteController {
         this.pacienteService = pacienteService;
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_ADMIN')")
     @PostMapping()
     public PacienteResponseDTO salvarPaciente(@RequestBody PacienteRequestDTO request,
                                               //@RequestParam("date")
@@ -29,7 +29,7 @@ public class PacienteController {
         return pacienteService.salvarPaciente(request);
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_ADMIN')")
     @GetMapping()
     public List<PacienteResponseDTO> listarPacientes() {
         var Pacientes = pacienteService.listarPacientes();
@@ -41,9 +41,12 @@ public class PacienteController {
 
     }
 
-    @PreAuthorize("hasAuthority('PACIENTE') or hasAnyAuthority('NUTRICIONISTA') or hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_PACIENTE', 'SCOPE_NUTRICIONISTA', 'SCOPE_ADMIN')")
     @GetMapping("/{id}")
-    public ResponseEntity<PacienteResponseDTO> search(@PathVariable long id) {
+    public ResponseEntity<PacienteResponseDTO> search(
+            @PathVariable long id,
+            @RequestHeader(name="Authorization") String token
+    ) {
         PacienteResponseDTO response = pacienteService.buscarPaciente(id);
         if (response != null) {
             return ResponseEntity.ok(response);
@@ -52,14 +55,14 @@ public class PacienteController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> remove(@PathVariable long id) {
         pacienteService.removerPaciente(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasAuthority('PACIENTE') or hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_PACIENTE', 'SCOPE_ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<PacienteResponseDTO> update(@PathVariable long id,
                                                       @RequestBody PacienteRequestDTO request,
